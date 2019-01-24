@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:id="@+id/spinner_corp"
+        android:textAlignment="center"
+        android:layout_marginBottom="40dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:textSize="@dimen/text_view_size"
+        android:textAlignment="center"
+        android:id="@+id/tanggal_awal"
+        android:hint="PILIH TANGGAL AWAL"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/colorBlack"
+        android:background="@drawable/button_bg_border"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:id="@+id/tanggal_akhir"
+        android:textSize="@dimen/text_view_size"
+        android:textAlignment="center"
+        android:hint="PILIH TANGGAL AKHIR"
+        android:textColor="@color/colorBlack"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/button_bg_border"
+        android:layout_marginBottom="20dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="LOGIN"
+        android:id="@+id/login_button"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/small_text_view_size"
+        android:hint="Tambah Korporasi Baru"
+        android:id="@+id/text_tambah_korporasi"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

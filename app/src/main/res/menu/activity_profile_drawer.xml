@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item android:title="Jurnal">
+        <menu>
+            <item
+                android:id="@+id/add_akun"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Tambah akun" />
+            <item
+                android:id="@+id/add_transaction"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Pengaturan Transaksi" />
+        </menu>
+    </item>
+    <item android:title="Laporan">
+        <menu>
+            <item
+                android:id="@+id/laporan_identitas"
+                android:icon="@drawable/ic_menu_slideshow"
+                android:title="Laporan Identitas" />
+            <item
+                android:id="@+id/laporan_bas"
+                android:icon="@drawable/ic_menu_slideshow"
+                android:title="Laporan BAS" />
+            <item
+                android:id="@+id/laporan_jurnal"
+                android:icon="@drawable/ic_menu_slideshow"
+                android:title="Laporan Jurnal" />
+            <item
+                android:id="@+id/laporan_ledger"
+                android:icon="@drawable/ic_menu_slideshow"
+                android:title="Laporan Ledger dan NS" />
+            <item
+                android:title="Laporan Neraca"
+                android:id="@+id/laporan_neraca"
+                android:icon="@drawable/ic_menu_slideshow"/>
+            <item
+                android:title="Laporan Laba Rugi"
+                android:id="@+id/laporan_laba_rugi"
+                android:icon="@drawable/ic_menu_slideshow"/>
+            <item
+                android:title="Laporan Perubahan Ekuitas"
+                android:id="@+id/laporan_perubahan_ekuitas"
+                android:icon="@drawable/ic_menu_slideshow"
+                />
+        </menu>
+    </item>
+
+</menu>
