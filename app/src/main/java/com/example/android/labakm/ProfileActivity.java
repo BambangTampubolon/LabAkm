@@ -29,10 +29,12 @@ import com.example.android.labakm.Fragment.FragmentLedger;
 import com.example.android.labakm.Fragment.FragmentNeraca;
 import com.example.android.labakm.Fragment.FragmentValidasiSave;
 import com.example.android.labakm.Fragment.StateSelectionFragment;
+import com.example.android.labakm.Interface.CorporationManager;
 import com.example.android.labakm.Interface.FragmentExitInterface;
 import com.example.android.labakm.Interface.LaporanTotal;
 import com.example.android.labakm.dao.CorporationDao;
 import com.example.android.labakm.entity.Corporation;
+import com.example.android.labakm.manager.CorporationManagerImpl;
 import com.example.android.labakm.setting.DatabaseSetting;
 import com.example.android.labakm.util.StaticVariable;
 
@@ -56,6 +58,7 @@ public class ProfileActivity extends AppCompatActivity
     private FragmentManager fragmentManager;
     private FragmentExitApplication fragmentExitApplication;
     private Intent toMainActivityIntent;
+    private CorporationManager corporationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,27 +66,23 @@ public class ProfileActivity extends AppCompatActivity
         setContentView(R.layout.activity_profile);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Intent intentFromMain = getIntent();
+        corporationDao = DatabaseSetting.getDatabase(this).corporationDao();
+        corporationManager = new CorporationManagerImpl(corporationDao, this);
 
         stateSelectionFragment = (StateSelectionFragment) getFragmentManager().findFragmentByTag("headless");
         if(null == stateSelectionFragment){
             stateSelectionFragment = new StateSelectionFragment();
             getFragmentManager().beginTransaction().add(stateSelectionFragment, "headless").commit();
         }
-        corporationDao = DatabaseSetting.getDatabase(this).corporationDao();
 
-//        corporationIntent = (Corporation) intentFromMain.getSerializableExtra("idSelected");
         try {
-            corporationIntent = new getAllAsyncTask(corporationDao).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+            corporationIntent = corporationManager.getCorporationActive(true);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         awal = corporationIntent.getStart_date();
         akhir = corporationIntent.getEnd_date();
-//        awal = new Date(intentFromMain.getLongExtra("awal", 0));
-//        akhir = new Date(intentFromMain.getLongExtra("akhir", 0));
+
         intentToTambahJurnal = new Intent(this, TambahJurnal.class);
         intentToTambahJurnal.putExtra("idSelected", corporationIntent);
         intentToTambahAkun = new Intent(this, TambahAkun.class);
@@ -314,26 +313,4 @@ public class ProfileActivity extends AppCompatActivity
         this.fragmentExitApplication.dismiss();
     }
 
-    private static class getAllAsyncTask extends AsyncTask<Void,Void,Corporation> {
-        private CorporationDao corporationDao;
-
-        public getAllAsyncTask(CorporationDao corporationDao){
-            this.corporationDao = corporationDao;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Corporation corporations) {
-            super.onPostExecute(corporations);
-        }
-
-        @Override
-        protected Corporation doInBackground(Void... voids) {
-            return corporationDao.getCorporationActive(true);
-        }
-    }
 }

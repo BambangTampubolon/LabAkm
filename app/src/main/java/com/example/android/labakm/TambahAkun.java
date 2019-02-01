@@ -12,11 +12,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.android.labakm.Fragment.FragmentValidasiSave;
+import com.example.android.labakm.Interface.AkunManager;
 import com.example.android.labakm.Interface.FragmentPauseInterface;
 import com.example.android.labakm.dao.AkunDao;
 import com.example.android.labakm.dao.CorporationDao;
 import com.example.android.labakm.entity.Akun;
 import com.example.android.labakm.entity.Corporation;
+import com.example.android.labakm.manager.AkunManagerImpl;
 import com.example.android.labakm.setting.DatabaseSetting;
 
 public class TambahAkun extends AppCompatActivity implements FragmentPauseInterface{
@@ -28,6 +30,7 @@ public class TambahAkun extends AppCompatActivity implements FragmentPauseInterf
     private static Intent toProfileIntent;
     private FragmentManager fragmentManager;
     private FragmentValidasiSave fragmentValidasiSave;
+    private AkunManager akunManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +41,10 @@ public class TambahAkun extends AppCompatActivity implements FragmentPauseInterf
         editSaldo = findViewById(R.id.edit_saldo_awal);
         saveButton = findViewById(R.id.save_button);
         toastSucess = Toast.makeText(this, "Data berhasil Disimpan", Toast.LENGTH_LONG);
-
         akunDao = DatabaseSetting.getDatabase(this).akunDao();
+        akunManager = new AkunManagerImpl(akunDao, this);
+
+
         Intent intentFromProfile = getIntent();
         corporationItent = (Corporation) intentFromProfile.getSerializableExtra("idSelected");
 
@@ -56,22 +61,12 @@ public class TambahAkun extends AppCompatActivity implements FragmentPauseInterf
         toProfileIntent.putExtra("idSelected", corporationItent);
     }
 
-    @SuppressLint("StaticFieldLeak")
-    public void saveAkun(final Akun akun){
-        new AsyncTask<Void,Void,Void>(){
-            @Override
-            protected Void doInBackground(Void... voids) {
-                akunDao.insert(akun);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                toastSucess.show();
-                startActivity(toProfileIntent);
-            }
-        }.execute();
+    public void saveAkun(Akun akun) throws Exception {
+        long idReturned = akunManager.insertAkun(akun);
+        if(idReturned > 0){
+           toastSucess.show();
+           startActivity(toProfileIntent);
+        }
     }
 
     private void showIntialFragment(){
@@ -99,7 +94,11 @@ public class TambahAkun extends AppCompatActivity implements FragmentPauseInterf
             akun.setSaldo_awal(Integer.valueOf(editSaldo.getText().toString()));
         }
         akun.setId_corporation(corporationItent.getId());
-        saveAkun(akun);
+        try {
+            saveAkun(akun);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean validasiSave(){

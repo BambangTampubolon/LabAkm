@@ -11,11 +11,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.android.labakm.Adapter.JurnalNeracaAdapter;
+import com.example.android.labakm.Interface.JurnalManager;
 import com.example.android.labakm.R;
 import com.example.android.labakm.ViewModel.JurnalNeraca;
 import com.example.android.labakm.dao.JurnalDao;
 import com.example.android.labakm.entity.Corporation;
 import com.example.android.labakm.entity.Jurnal;
+import com.example.android.labakm.manager.JurnalManagerImpl;
 import com.example.android.labakm.setting.DatabaseSetting;
 
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class FragmentNeraca extends Fragment{
     private Corporation corporationIntent;
     private Date startDate, endDate;
     private JurnalDao jurnalDao;
+    private JurnalManager jurnalManager;
 
     @Nullable
     @Override
@@ -49,6 +52,8 @@ public class FragmentNeraca extends Fragment{
         textJumlahKewajiban = view.findViewById(R.id.jumlah_kewajiban);
         textJumlahEkuitasModal = view.findViewById(R.id.jumlah_ekuitas_modal);
         textKewajibanEkuitas = view.findViewById(R.id.jumlah_kewajiban_ekuitas_modal);
+        jurnalDao = DatabaseSetting.getDatabase(getContext()).jurnalDao();
+        jurnalManager = new JurnalManagerImpl(jurnalDao, getContext());
 
         Bundle bundle = getArguments();
         if(null != bundle){
@@ -56,19 +61,17 @@ public class FragmentNeraca extends Fragment{
             startDate = new Date(bundle.getLong("awal", 0));
             endDate = new Date(bundle.getLong("akhir", 0));
         }
-        jurnalDao = DatabaseSetting.getDatabase(getContext()).jurnalDao();
+
         try {
-            listJurnalAsetNonLancar = new getAllAsyncTask(jurnalDao, startDate, endDate,
-                    "12%", corporationIntent.getId()).execute().get();
-            listJurnalAsetLancar = new getAllAsyncTask(jurnalDao,startDate,endDate,
-                    "11%", corporationIntent.getId()).execute().get();
-            listJurnalKewajiban = new getAllAsyncTask(jurnalDao,startDate,endDate,
-                    "61%", corporationIntent.getId()).execute().get();
-            listJurnalEkuitas = new getAllAsyncTask(jurnalDao,startDate, endDate,
-                    "3%", corporationIntent.getId()).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+            listJurnalAsetNonLancar = jurnalManager.getAllJurnalByKodeAkun(startDate.getTime(), endDate.getTime(),
+                    "12%", corporationIntent.getId());
+            listJurnalAsetLancar = jurnalManager.getAllJurnalByKodeAkun(startDate.getTime(), endDate.getTime(),
+                    "11%", corporationIntent.getId());
+            listJurnalKewajiban = jurnalManager.getAllJurnalByKodeAkun(startDate.getTime(), endDate.getTime(),
+                    "61%", corporationIntent.getId());
+            listJurnalEkuitas = jurnalManager.getAllJurnalByKodeAkun(startDate.getTime(), endDate.getTime(),
+                    "3%", corporationIntent.getId());
+        } catch (Exception e) {
             e.printStackTrace();
         }
         neracaAsetNonLancar = populateJurnalNeracaFromListJurnal(listJurnalAsetNonLancar);
@@ -132,38 +135,5 @@ public class FragmentNeraca extends Fragment{
             }
         }
         return  jurnalNeracaList;
-    }
-
-
-    private static class getAllAsyncTask extends AsyncTask<Void,Void,List<Jurnal>> {
-        private JurnalDao jurnalDao;
-        private Date startDate, endDate;
-        private String kodeAkun;
-        private int idCorporation;
-
-        public getAllAsyncTask(JurnalDao jurnalDao, Date startDate, Date endDate,
-                               String kodeAkun, int idCorporation){
-            this.jurnalDao = jurnalDao;
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.kodeAkun = kodeAkun;
-            this.idCorporation = idCorporation;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(List<Jurnal> jurnalList) {
-            super.onPostExecute(jurnalList);
-        }
-
-        @Override
-        protected List<Jurnal> doInBackground(Void... voids) {
-            return jurnalDao.getAllJurnalByKodeAkun(startDate.getTime(), endDate.getTime(),
-                    kodeAkun, idCorporation);
-        }
     }
 }

@@ -10,10 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.android.labakm.Interface.JurnalManager;
 import com.example.android.labakm.R;
 import com.example.android.labakm.dao.JurnalDao;
 import com.example.android.labakm.entity.Corporation;
 import com.example.android.labakm.entity.Jurnal;
+import com.example.android.labakm.manager.JurnalManagerImpl;
 import com.example.android.labakm.setting.DatabaseSetting;
 
 import java.text.DateFormat;
@@ -30,6 +32,7 @@ public class FragmentEkuitas extends Fragment {
     private Date startDate, endDate;
     private Corporation corporationIntent;
     final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
+    private JurnalManager jurnalManager;
 
     @Nullable
     @Override
@@ -40,8 +43,8 @@ public class FragmentEkuitas extends Fragment {
         textJumlahPendapatan = view.findViewById(R.id.text_jumlah_laba_periode);
         textPeriodeAkhir = view.findViewById(R.id.text_akhir_periode);
         textJumlahPeriodeAkhir = view.findViewById(R.id.text_jumlah_akhir_periode);
-
         jurnalDao = DatabaseSetting.getDatabase(getContext()).jurnalDao();
+        jurnalManager = new JurnalManagerImpl(jurnalDao, getContext());
         int awalModal = 0;
         int jumlahPendapatan = 0;
         Bundle bundle = getArguments();
@@ -52,10 +55,9 @@ public class FragmentEkuitas extends Fragment {
             jumlahPendapatan = bundle.getInt("jumlah_untung");
         }
         try {
-            jurnalPendapatan = new getAllAsyncTask(jurnalDao,startDate, endDate, "3%", corporationIntent.getId()).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+            jurnalPendapatan = jurnalManager.getAllJurnalByKodeAkun(startDate.getTime(), endDate.getTime(), "3%", corporationIntent.getId());
+//            jurnalPendapatan = new getAllAsyncTask(jurnalDao,startDate, endDate, "3%", corporationIntent.getId()).execute().get();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         for(Jurnal jurnal: jurnalPendapatan){
@@ -74,35 +76,5 @@ public class FragmentEkuitas extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-    }
-
-    private static class getAllAsyncTask extends AsyncTask<Void,Void,List<Jurnal>> {
-        private JurnalDao jurnalDao;
-        private Date startDate, endDate;
-        private String kodeAkun;
-        private int idCorporation;
-
-        public getAllAsyncTask(JurnalDao jurnalDao, Date startDate, Date endDate, String kodeAkun, int idCorporation){
-            this.jurnalDao = jurnalDao;
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.kodeAkun = kodeAkun;
-            this.idCorporation = idCorporation;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(List<Jurnal> jurnalList) {
-            super.onPostExecute(jurnalList);
-        }
-
-        @Override
-        protected List<Jurnal> doInBackground(Void... voids) {
-            return jurnalDao.getAllJurnalByKodeAkun(startDate.getTime(), endDate.getTime(), kodeAkun, idCorporation);
-        }
     }
 }

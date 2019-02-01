@@ -14,7 +14,7 @@ import java.util.List;
 public interface JurnalDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertJurnal(Jurnal jurnal);
+    long insertJurnal(Jurnal jurnal);
 
     @Query("SELECT * FROM jurnal where id_corporation = :idCorp ORDER BY created_date")
     List<Jurnal> getAllJurnal(int idCorp);
@@ -33,10 +33,10 @@ public interface JurnalDao {
     List<Jurnal> getAllJurnalByKodeAkun(Long startDate, Long endDate, String akun, int idCorp);
 
     @Query("DELETE FROM jurnal where id = :idJurnal")
-    void deleteJurnal(int idJurnal);
+    int deleteJurnal(int idJurnal);
 
     @Update
-    void updateJurnal(Jurnal jurnal);
+    int updateJurnal(Jurnal jurnal);
 
 
 }

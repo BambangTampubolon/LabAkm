@@ -29,8 +29,11 @@ import com.example.android.labakm.Adapter.JurnalFragmentAdapter;
 import com.example.android.labakm.Fragment.FragmentValidasiDelete;
 import com.example.android.labakm.Fragment.FragmentValidasiSave;
 import com.example.android.labakm.Fragment.StateSelectionFragment;
+import com.example.android.labakm.Interface.AkunManager;
+import com.example.android.labakm.Interface.CorporationManager;
 import com.example.android.labakm.Interface.FragmentDeleteInterface;
 import com.example.android.labakm.Interface.FragmentPauseInterface;
+import com.example.android.labakm.Interface.JurnalManager;
 import com.example.android.labakm.Interface.ListJurnalInterface;
 import com.example.android.labakm.dao.AkunDao;
 import com.example.android.labakm.dao.CorporationDao;
@@ -38,6 +41,9 @@ import com.example.android.labakm.dao.JurnalDao;
 import com.example.android.labakm.entity.Akun;
 import com.example.android.labakm.entity.Corporation;
 import com.example.android.labakm.entity.Jurnal;
+import com.example.android.labakm.manager.AkunManagerImpl;
+import com.example.android.labakm.manager.CorporationManagerImpl;
+import com.example.android.labakm.manager.JurnalManagerImpl;
 import com.example.android.labakm.setting.DatabaseSetting;
 import com.example.android.labakm.util.DatePickerFragment;
 
@@ -77,6 +83,9 @@ public class TambahJurnal extends AppCompatActivity implements DatePickerDialog.
     private FragmentValidasiDelete fragmentValidasiDelete;
     private Jurnal jurnalSelected;
     private boolean isEditMode;
+    private CorporationManager corporationManager;
+    private AkunManager akunManager;
+    private JurnalManager jurnalManager;
 
     DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
     String[] akunDB;
@@ -101,14 +110,17 @@ public class TambahJurnal extends AppCompatActivity implements DatePickerDialog.
         corporationDao = DatabaseSetting.getDatabase(this).corporationDao();
         akunDao = DatabaseSetting.getDatabase(this).akunDao();
         jurnalDao = DatabaseSetting.getDatabase(this).jurnalDao();
+
+        corporationManager = new CorporationManagerImpl(corporationDao, this);
+        jurnalManager = new JurnalManagerImpl(jurnalDao, this);
+        akunManager = new AkunManagerImpl(akunDao, this);
+
         toProfileIntent = new Intent(this,ProfileActivity.class);
         try {
-            corporationIntent = new getAllAsyncTask(corporationDao).execute().get();
-            akunsDB = new getAllAkunAsyncTask(akunDao, corporationIntent.getId()).execute().get();
-            listAllJurnal = new getAllJurnalAsyncTask(jurnalDao, corporationIntent.getId()).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+            corporationIntent = corporationManager.getCorporationActive(true);
+            akunsDB = akunManager.getAllAkun(corporationIntent.getId());
+            listAllJurnal = jurnalManager.getAllJurnal(corporationIntent.getId());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -269,29 +281,6 @@ public class TambahJurnal extends AppCompatActivity implements DatePickerDialog.
         tanggalJurnal = null;
     }
 
-    private static class getAllAsyncTask extends AsyncTask<Void,Void,Corporation> {
-        private CorporationDao corporationDao;
-
-        public getAllAsyncTask(CorporationDao corporationDao){
-            this.corporationDao = corporationDao;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Corporation corporations) {
-            super.onPostExecute(corporations);
-        }
-
-        @Override
-        protected Corporation doInBackground(Void... voids) {
-            return corporationDao.getCorporationActive(true);
-        }
-    }
-
     private void datePicker(View view){
         DatePickerFragment datePickerFragment = new DatePickerFragment();
         datePickerFragment.show(getFragmentManager(), "dialog");
@@ -421,83 +410,25 @@ public class TambahJurnal extends AppCompatActivity implements DatePickerDialog.
         this.fragmentValidasiDelete.dismiss();
     }
 
-
-    private static class getAllAkunAsyncTask extends AsyncTask<Void,Void,List<Akun>> {
-        private AkunDao akunDao;
-        private int idCorporation;
-
-        public getAllAkunAsyncTask(AkunDao akunDao, int idCorporation){
-            this.akunDao = akunDao;
-            this.idCorporation = idCorporation;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(List<Akun> akuns) {
-            super.onPostExecute(akuns);
-        }
-
-        @Override
-        protected List<Akun> doInBackground(Void... voids) {
-            return akunDao.getAllAkun(idCorporation);
+    public void editJurnal(Jurnal jurnal){
+        if(jurnalManager.updateJurnal(jurnal) > 0){
+            toasSucessUpdate.show();
+            startActivity(toProfileIntent);
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    public void editJurnal(final Jurnal jurnal){
-        new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected Void doInBackground(Void... voids) {
-                jurnalDao.updateJurnal(jurnal);
-                return null;
-            }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                toasSucessUpdate.show();
-                startActivity(toProfileIntent);
-            }
-        }.execute();
+    public void saveJurnal(Jurnal jurnal){
+        if(jurnalManager.insertJurnal(jurnal) > 0){
+            toastSucessSave.show();
+            startActivity(toProfileIntent);
+        }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    public void saveJurnal(final Jurnal jurnal){
-        new AsyncTask<Void,Void,Void>(){
-            @Override
-            protected Void doInBackground(Void... voids) {
-                jurnalDao.insertJurnal(jurnal);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                toastSucessSave.show();
-                startActivity(toProfileIntent);
-            }
-        }.execute();
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    public void deleteJurnal(final Jurnal jurnal){
-        new AsyncTask<Void,Void,Void>(){
-            @Override
-            protected Void doInBackground(Void... voids) {
-                jurnalDao.deleteJurnal(jurnalSelected.getId());
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                toastSucessDelete.show();
-            }
-        }.execute();
+    public void deleteJurnal(Jurnal jurnal){
+        if(jurnalManager.deleteJurnal(jurnal.getId()) > 0){
+            toastSucessDelete.show();
+        }
     }
 
     private void showIntialFragment(){
@@ -532,29 +463,6 @@ public class TambahJurnal extends AppCompatActivity implements DatePickerDialog.
         }
     }
 
-    private static class getAllJurnalAsyncTask extends AsyncTask<Void,Void,List<Jurnal>> {
-        private JurnalDao jurnalDao;
-        private int idCorp;
 
-        public getAllJurnalAsyncTask(JurnalDao jurnalDao, int idCorp){
-            this.jurnalDao = jurnalDao;
-            this.idCorp = idCorp;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(List<Jurnal> jurnalList) {
-            super.onPostExecute(jurnalList);
-        }
-
-        @Override
-        protected List<Jurnal> doInBackground(Void... voids) {
-            return jurnalDao.getAllJurnal(idCorp);
-        }
-    }
 
 }

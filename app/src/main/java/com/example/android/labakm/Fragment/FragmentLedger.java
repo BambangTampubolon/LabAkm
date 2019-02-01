@@ -11,11 +11,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.android.labakm.Adapter.JurnalLedgerAdapter;
+import com.example.android.labakm.Interface.JurnalManager;
 import com.example.android.labakm.R;
 import com.example.android.labakm.ViewModel.JurnalLedger;
 import com.example.android.labakm.dao.JurnalDao;
 import com.example.android.labakm.entity.Corporation;
 import com.example.android.labakm.entity.Jurnal;
+import com.example.android.labakm.manager.JurnalManagerImpl;
 import com.example.android.labakm.setting.DatabaseSetting;
 
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ public class FragmentLedger extends Fragment{
     private List<JurnalLedger> ledgerAset, ledgerNonAset;
     private TextView textJumlahSaldoAwal, textJumlahModal, textJumlahDebit,
             textJumlahKredit, textJumlahSaldoAkhir;
+    private JurnalManager jurnalManager;
 
     @Nullable
     @Override
@@ -45,7 +48,8 @@ public class FragmentLedger extends Fragment{
         textJumlahDebit = view.findViewById(R.id.text_jumlah_debit);
         textJumlahKredit = view.findViewById(R.id.text_jumlah_kredit);
         textJumlahSaldoAkhir = view.findViewById(R.id.text_jumlah_saldo_akhir);
-
+        jurnalDao = DatabaseSetting.getDatabase(getContext()).jurnalDao();
+        jurnalManager = new JurnalManagerImpl(jurnalDao, getContext());
 
         Bundle bundle = getArguments();
         if(null != bundle){
@@ -54,12 +58,9 @@ public class FragmentLedger extends Fragment{
             endDate = new Date(bundle.getLong("akhir", 0));
         }
 
-        jurnalDao = DatabaseSetting.getDatabase(getContext()).jurnalDao();
         try {
-            jurnalList = new getAllAsyncTask(jurnalDao, startDate, endDate, corporationIntent.getId()).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+            jurnalList = jurnalManager.getAllJurnalForReportLedger(startDate.getTime(), endDate.getTime(), corporationIntent.getId());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -162,31 +163,4 @@ public class FragmentLedger extends Fragment{
         return  resultJurnal;
     }
 
-    private static class getAllAsyncTask extends AsyncTask<Void,Void,List<Jurnal>> {
-        private JurnalDao jurnalDao;
-        private Date startDate, endDate;
-        private int idCorporation;
-
-        public getAllAsyncTask(JurnalDao jurnalDao, Date startDate, Date endDate, int idCorporation){
-            this.jurnalDao = jurnalDao;
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.idCorporation = idCorporation;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(List<Jurnal> jurnalList) {
-            super.onPostExecute(jurnalList);
-        }
-
-        @Override
-        protected List<Jurnal> doInBackground(Void... voids) {
-            return jurnalDao.getAllJurnalForReportLedger(startDate.getTime(), endDate.getTime(), idCorporation);
-        }
-    }
 }

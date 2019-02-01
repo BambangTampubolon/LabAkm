@@ -12,7 +12,7 @@ import java.util.List;
 public interface AkunDao {
 
     @Insert
-    void insert(Akun akun);
+    long insert(Akun akun);
 
     @Query("SELECT * FROM akun where id_corporation = :idCorporation")
     List<Akun> getAllAkun(int idCorporation);

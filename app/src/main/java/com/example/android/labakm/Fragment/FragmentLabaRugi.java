@@ -13,12 +13,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.android.labakm.Adapter.JurnalLabaRugiAdapter;
+import com.example.android.labakm.Interface.JurnalManager;
 import com.example.android.labakm.Interface.LaporanTotal;
 import com.example.android.labakm.R;
 import com.example.android.labakm.ViewModel.JurnalNeraca;
 import com.example.android.labakm.dao.JurnalDao;
 import com.example.android.labakm.entity.Corporation;
 import com.example.android.labakm.entity.Jurnal;
+import com.example.android.labakm.manager.JurnalManagerImpl;
 import com.example.android.labakm.setting.DatabaseSetting;
 
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public class FragmentLabaRugi extends Fragment{
     private Corporation corporationIntent;
     private Date startDate,endDate;
     private LaporanTotal laporanTotal;
+    private JurnalManager jurnalManager;
 
 
     @Nullable
@@ -54,7 +57,8 @@ public class FragmentLabaRugi extends Fragment{
         listPendapatanJasa = view.findViewById(R.id.list_pendapatan_jasa);
         listBebanOperasional = view.findViewById(R.id.list_beban_operasional);
         listBebanAdministrasi = view.findViewById(R.id.list_beban_administrasi);
-
+        jurnalDao = DatabaseSetting.getDatabase(getContext()).jurnalDao();
+        jurnalManager = new JurnalManagerImpl(jurnalDao, getContext());
         Bundle bundle = getArguments();
         if(null != bundle){
             corporationIntent = (Corporation) bundle.getSerializable("idSelected");
@@ -62,29 +66,19 @@ public class FragmentLabaRugi extends Fragment{
             endDate = new Date(bundle.getLong("akhir", 0));
         }
 
-        jurnalDao = DatabaseSetting.getDatabase(getContext()).jurnalDao();
-
         try {
-            pendapatanJurnals = new getAllAsyncTask(jurnalDao, startDate, endDate,
-                    "42%",corporationIntent.getId()).execute().get();
-            bebanOperasionalJurnals = new getAllAsyncTask(jurnalDao, startDate, endDate,
-                    "51%",corporationIntent.getId()).execute().get();
-            bebanAdministrasiJurnals = new getAllAsyncTask(jurnalDao, startDate, endDate,
-                    "52%",corporationIntent.getId()).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+            pendapatanJurnals = jurnalManager.getAllJurnalByKodeAkun(startDate.getTime(),endDate.getTime(),
+                    "42%", corporationIntent.getId());
+            bebanOperasionalJurnals = jurnalManager.getAllJurnalByKodeAkun(startDate.getTime(), endDate.getTime(),
+                    "51%", corporationIntent.getId());
+            bebanAdministrasiJurnals = jurnalManager.getAllJurnalByKodeAkun(startDate.getTime(), endDate.getTime(),
+                    "52%", corporationIntent.getId());
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.i("cekpendapatanjurnal", "onCreateView: " + pendapatanJurnals.size() + " :" + pendapatanJurnals);
-        Log.i("OperasionalJurnals", "onCreateView: " + bebanOperasionalJurnals.size() + " :" + bebanOperasionalJurnals);
-        Log.i("AdministrasiJurnals", "onCreateView: " + bebanAdministrasiJurnals.size() + " :" + bebanAdministrasiJurnals);
         pendapatanNeraca = populateJurnalNeracaFromList(pendapatanJurnals);
         bebanOperasionalNeraca = populateJurnalNeracaFromList(bebanOperasionalJurnals);
         bebanAdministrasiNeraca = populateJurnalNeracaFromList(bebanAdministrasiJurnals);
-        Log.i("cekpendapatanNeraca", "onCreateView: " + pendapatanNeraca.size() + " :" + pendapatanNeraca);
-        Log.i("bebanOperasionalNeraca", "onCreateView: " + bebanOperasionalNeraca.size() + " :" + bebanOperasionalNeraca);
-        Log.i("bebanAdministrasiNeraca", "onCreateView: " + bebanAdministrasiNeraca.size() + " :" + bebanAdministrasiNeraca);
         pendapatanJasaAdapter = new JurnalLabaRugiAdapter(pendapatanNeraca, getContext());
         bebanOperasionalAdapter = new JurnalLabaRugiAdapter(bebanOperasionalNeraca, getContext());
         bebanAdministrasiAdapter = new JurnalLabaRugiAdapter(bebanAdministrasiNeraca, getContext());
@@ -135,38 +129,6 @@ public class FragmentLabaRugi extends Fragment{
             }
         }
         return  jurnalNeracaList;
-    }
-
-    private static class getAllAsyncTask extends AsyncTask<Void,Void,List<Jurnal>> {
-        private JurnalDao jurnalDao;
-        private Date startDate, endDate;
-        private String kodeAkun;
-        private int idCorporation;
-
-        public getAllAsyncTask(JurnalDao jurnalDao, Date startDate, Date endDate, String kodeAkun,
-                               int idCorporation){
-            this.jurnalDao = jurnalDao;
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.kodeAkun = kodeAkun;
-            this.idCorporation = idCorporation;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(List<Jurnal> jurnalList) {
-            super.onPostExecute(jurnalList);
-        }
-
-        @Override
-        protected List<Jurnal> doInBackground(Void... voids) {
-            return jurnalDao.getAllJurnalByKodeAkun(startDate.getTime(), endDate.getTime()
-                    ,kodeAkun,idCorporation);
-        }
     }
 
     @Override

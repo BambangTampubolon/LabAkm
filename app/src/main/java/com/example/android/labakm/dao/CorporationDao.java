@@ -12,7 +12,7 @@ import java.util.List;
 public interface CorporationDao {
 
     @Insert
-    void insertCorporation(Corporation corporation);
+    long insertCorporation(Corporation corporation);
 
     @Query("SELECT * FROM corporation")
     List<Corporation> getAllCorporation();
