@@ -13,7 +13,9 @@ import com.example.android.labakm.Fragment.FragmentValidasiSave;
 import com.example.android.labakm.Interface.CorporationManager;
 import com.example.android.labakm.Interface.FragmentPauseInterface;
 import com.example.android.labakm.dao.CorporationDao;
+import com.example.android.labakm.entity.Barang;
 import com.example.android.labakm.entity.Corporation;
+import com.example.android.labakm.entity.viewmodel.BarangViewModel;
 import com.example.android.labakm.manager.CorporationManagerImpl;
 import com.example.android.labakm.setting.DatabaseSetting;
 

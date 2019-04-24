@@ -56,7 +56,6 @@ public class FragmentEkuitas extends Fragment {
         }
         try {
             jurnalPendapatan = jurnalManager.getAllJurnalByKodeAkun(startDate.getTime(), endDate.getTime(), "3%", corporationIntent.getId());
-//            jurnalPendapatan = new getAllAsyncTask(jurnalDao,startDate, endDate, "3%", corporationIntent.getId()).execute().get();
         } catch (Exception e) {
             e.printStackTrace();
         }

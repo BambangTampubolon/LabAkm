@@ -13,6 +13,15 @@
                 android:id="@+id/add_transaction"
                 android:icon="@drawable/ic_menu_manage"
                 android:title="Pengaturan Transaksi" />
+            <item
+                android:id="@+id/add_item"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Pengaturan Barang" />
+            <item
+                android:id="@+id/add_order"
+                android:icon="@drawable/ic_menu_slideshow"
+                android:title="Pengaturan Order"
+                />
         </menu>
     </item>
     <item android:title="Laporan">

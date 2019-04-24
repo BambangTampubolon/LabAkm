@@ -52,32 +52,4 @@ public class FragmentJurnal extends Fragment {
         listViewJurnal.setAdapter(jurnalAdapter);
         return view;
     }
-
-//    private static class getAllAsyncTask extends AsyncTask<Void,Void,List<Jurnal>> {
-//        private JurnalDao jurnalDao;
-//        private Date startDate, endDate;
-//        private int idCorporation;
-//
-//        public getAllAsyncTask(JurnalDao jurnalDao, Date startDate, Date endDate, int idCorporation){
-//            this.jurnalDao = jurnalDao;
-//            this.startDate = startDate;
-//            this.endDate = endDate;
-//            this.idCorporation = idCorporation;
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected void onPostExecute(List<Jurnal> jurnalList) {
-//            super.onPostExecute(jurnalList);
-//        }
-//
-//        @Override
-//        protected List<Jurnal> doInBackground(Void... voids) {
-//            return jurnalDao.getAllJurnalForReport(startDate.getTime(), endDate.getTime(), idCorporation);
-//        }
-//    }
 }

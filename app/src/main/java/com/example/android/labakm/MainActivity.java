@@ -5,8 +5,10 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,10 +18,25 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.android.labakm.dao.CorporationDao;
 import com.example.android.labakm.entity.Corporation;
+import com.example.android.labakm.entity.MySingleton;
 import com.example.android.labakm.setting.DatabaseSetting;
 import com.example.android.labakm.util.DatePickerFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.text.DateFormat;
@@ -27,7 +44,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
@@ -42,6 +61,14 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     private boolean isAwal;
     private Date dateAwal, dateAkhir;
     Intent toProfileIntent;
+    final private String FCM_API = "https://fcm.googleapis.com/fcm/send";
+    final private String serverKey = "key=" + "AAAAsDHkEeQ:APA91bH697nLvUSRrTXlC95hT1RP70OU2kJz9Kr2xPc6v_8Awcj7jfA8kynSPaBZtxEZey8jFqdjqvbQQF1DHvDh5Dxul7ne8rQJ_NhwVKc6EDlEwOih4zsfpToOo4aulyrIp2MkjNhW";
+    final private String contentType = "application/json";
+    final String TAG = "NOTIFICATION TAG";
+    String NOTIFICATION_TITLE;
+    String NOTIFICATION_MESSAGE;
+    String TOPIC;
+
 
 
     @Override
@@ -55,6 +82,27 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         textTambah = findViewById(R.id.text_tambah_korporasi);
         isAwal = false;
 
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                    @Override
+                    public void onSuccess(InstanceIdResult instanceIdResult) {
+                        String deviceToken = instanceIdResult.getToken();
+                        Log.i("onsucesstoken", "onSuccess: " + deviceToken);
+                    }
+                });
+
+        FirebaseMessaging.getInstance().subscribeToTopic("basar")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "SUCESSS";
+                        if(!task.isSuccessful()){
+                            msg = "FAILED";
+                        }
+                        Log.i("cek", "onComplete: " + msg);
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         corporationDao = DatabaseSetting.getDatabase(this).corporationDao();
         toProfileIntent = new Intent(this, ProfileActivity.class);
@@ -67,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         }
         String[] corpDB = populateSpinner(listCorporationDb).toArray(new String[0]);
         spinnerAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, corpDB);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown);
         spinnerCorp.setAdapter(spinnerAdapter);
 
         tanggalAwal.setOnClickListener(new View.OnClickListener() {
@@ -119,9 +167,84 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                     , dateAwal.getTime(), dateAkhir.getTime(), toProfileIntent).execute();
 
                 }
+
+//                TOPIC = "/topics/basar";
+                TOPIC = "/cR6rkMefLO4:APA91bGWT16WZDD_aKTV6fPYxucdwsXQXjL0VXytq6rL8r2REJVVKIOZe71vcgvKElsVxh4cZOrQW-e8tJDyhIrvGf2sNJ8VqRhCcTXXTw2D8z6QoTwDUgY5Slm3DtJkLESHCGY4yN0g";
+                NOTIFICATION_TITLE = "amrunn sempakkkk";
+                NOTIFICATION_MESSAGE = "KOEEEEEEE";
+
+//                JSONObject sendJSON = new JSONObject();
+//                JSONObject notification = new JSONObject();
+//                JSONObject notifBody = new JSONObject();
+//                JSONObject data = new JSONObject();
+//
+//                try {
+//                    notifBody.put("title", "Breaking News");
+//                    notifBody.put("body", "raimu ra cetooo masss");
+//                    data.put("story_id","lalalla");
+//
+//                    sendJSON.put("notification", notifBody);
+//                    sendJSON.put("token", "cR6rkMefLO4:APA91bGWT16WZDD_aKTV6fPYxucdwsXQXjL0VXytq6rL8r2REJVVKIOZe71vcgvKElsVxh4cZOrQW-e8tJDyhIrvGf2sNJ8VqRhCcTXXTw2D8z6QoTwDUgY5Slm3DtJkLESHCGY4yN0g");
+//                    sendJSON.put("data", data);
+//
+//                    notification.put("message", sendJSON);
+//                    Log.i("cekjson", "onClick: " + notification.toString());
+//
+//                }catch (Exception e){
+//                    Log.i("CEKERROR", "onClick: ");
+//                }
+
+
+
+                JSONObject notification = new JSONObject();
+                JSONObject notifBody = new JSONObject();
+                try {
+                    notifBody.put("title", NOTIFICATION_TITLE);
+                    notifBody.put("message", NOTIFICATION_MESSAGE);
+
+                    notification.put("to", TOPIC);
+                    notification.put("data", notifBody);
+                    JSONArray registrationId = new JSONArray();
+                    registrationId.put("cR6rkMefLO4:APA91bGWT16WZDD_aKTV6fPYxucdwsXQXjL0VXytq6rL8r2REJVVKIOZe71vcgvKElsVxh4cZOrQW-e8tJDyhIrvGf2sNJ8VqRhCcTXXTw2D8z6QoTwDUgY5Slm3DtJkLESHCGY4yN0g");
+                    notification.put("token", registrationId);
+                    Log.i("cekjson", "onClick: " + notification.toString());
+                } catch (JSONException e) {
+                    Log.i("CEKERROR", "onClick: ");
+                }
+
+                sendNotification(notification);
             }
         });
     }
+
+    private void sendNotification(JSONObject notification){
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(FCM_API, notification,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i("cekresponse", "onResponse: " + response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.this, "Request error", Toast.LENGTH_LONG).show();
+                        Log.i("cekerrorcall", "onErrorResponse: " + "notaworka");
+                    }
+                })
+                {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String,String> params = new HashMap<>();
+                params.put("Authorization", serverKey);
+                params.put("Content-Type", contentType);
+//                params.put("Authorization", "Bearer " + "dAhYtHqIGa0:APA91bFbkIdENc3QUXvmEUE6DO1Ud7bqQF2q7VlBU5Ev4Zgd2FcKW-spIMOq4fJtEzi98ymlD2yCAiP-_IndGz5DVOL-N798Yse5LPNkbSFUAwXKDxVyO0se1eVA4v3UzYym0pLBjGoe");
+                return params;
+            }
+        };
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+    }
+
 
     public List<String> populateSpinner(List<Corporation> corporations){
         List<String> listCorporations = new ArrayList<>();

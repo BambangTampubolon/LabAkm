@@ -55,12 +55,14 @@
     </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="AKUN ASET"
         android:textSize="@dimen/text_view_sub_header"
         android:layout_marginStart="@dimen/margin_small_start"
         android:layout_marginBottom="5dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/border_bottom"
         android:id="@+id/text_akun_aset"/>
 
     <ListView
@@ -77,6 +79,8 @@
         android:textSize="@dimen/text_view_sub_header"
         android:layout_marginTop="10dp"
         android:layout_marginStart="@dimen/margin_small_start"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/border_bottom"
         android:id="@+id/text_akun_nonaset"/>
 
     <ListView

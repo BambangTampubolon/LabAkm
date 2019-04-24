@@ -49,7 +49,7 @@ public class ProfileActivity extends AppCompatActivity
     private TextView userNameView, userAddressView;
     private LinearLayout linearLayout1,linearLayout2;
     private boolean isHide1, isHide2;
-    private Intent intentToTambahJurnal, intentToTambahAkun;
+    private Intent intentToTambahJurnal, intentToTambahAkun, intentToTambahItem, intentToTambahOrder;
     private Corporation corporationIntent;
     StateSelectionFragment stateSelectionFragment;
     private Date awal, akhir;
@@ -88,6 +88,8 @@ public class ProfileActivity extends AppCompatActivity
         intentToTambahAkun = new Intent(this, TambahAkun.class);
         intentToTambahAkun.putExtra("idSelected", corporationIntent);
         toMainActivityIntent = new Intent(this, MainActivity.class);
+        intentToTambahItem = new Intent(this, TambahBarang.class);
+        intentToTambahOrder = new Intent(this, InquiryActivity.class);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -269,10 +271,11 @@ public class ProfileActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.add_transaction) {
             startActivity(intentToTambahJurnal);
-        } else if (id == R.id.add_akun) {
+        }else if (id == R.id.add_item){
+            startActivity(intentToTambahItem);
+        }else if (id == R.id.add_akun) {
             startActivity(intentToTambahAkun);
         } else if (id == R.id.laporan_jurnal) {
             showFragmentActive("jurnal");
@@ -288,6 +291,8 @@ public class ProfileActivity extends AppCompatActivity
             showFragmentActive("labarugi");
         }else if(id == R.id.laporan_perubahan_ekuitas){
             showFragmentActive("ekuitas");
+        }else if (id == R.id.add_order){
+            startActivity(intentToTambahOrder);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

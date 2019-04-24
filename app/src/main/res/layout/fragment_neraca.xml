@@ -24,33 +24,41 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_view_sub_header"
         android:layout_marginStart="5dp"
-        android:text="ASET TIDAK LANCAR"/>
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/list_jurnal_aset_tidak_lancar"/>
+        android:text="ASET TIDAK LANCAR"
+        android:id="@+id/aset_tidak_lancar"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp">
+        android:orientation="vertical"
+        android:id="@+id/layout_aset_tidak_lancar">
 
-        <TextView
-            android:layout_width="0dp"
+        <ListView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:layout_marginStart="5dp"
-            android:text="Jumlah Aset Tidak Lancar"/>
+            android:id="@+id/list_jurnal_aset_tidak_lancar"/>
 
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/jumlah_aset_tidak_lancar"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:layout_marginStart="5dp"
+                android:text="Jumlah Aset Tidak Lancar"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/jumlah_aset_tidak_lancar"/>
+        </LinearLayout>
+
     </LinearLayout>
-
 
     <TextView
         android:layout_width="wrap_content"
@@ -58,31 +66,40 @@
         android:text="ASET LANCAR"
         android:textSize="@dimen/text_view_sub_header"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="20dp"/>
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/list_jurnal_aset_lancar"/>
+        android:layout_marginTop="20dp"
+        android:id="@+id/aset_lancar"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp">
+        android:orientation="vertical"
+        android:id="@+id/layout_aset_lancar">
 
-        <TextView
-            android:layout_width="0dp"
+        <ListView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:layout_marginStart="5dp"
-            android:text="Jumlah Aset Lancar"/>
+            android:id="@+id/list_jurnal_aset_lancar"/>
 
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/jumlah_aset_lancar"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:layout_marginStart="5dp"
+                android:text="Jumlah Aset Lancar"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/jumlah_aset_lancar"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -117,32 +134,41 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_view_sub_header"
         android:layout_marginStart="5dp"
+        android:id="@+id/kewajiban"
         android:text="KEWAJIBAN"/>
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/list_kewajiban"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp">
+        android:orientation="vertical"
+        android:id="@+id/layout_kewajiban">
 
-        <TextView
-            android:layout_width="0dp"
+        <ListView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="JUMLAH KEWAJIBAN"
-            android:layout_marginStart="5dp"
-            android:layout_weight="4"/>
+            android:id="@+id/list_kewajiban"/>
 
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/jumlah_kewajiban"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="JUMLAH KEWAJIBAN"
+                android:layout_marginStart="5dp"
+                android:layout_weight="4"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/jumlah_kewajiban"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <TextView
@@ -150,33 +176,43 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_view_sub_header"
         android:layout_marginStart="5dp"
-        android:text="EKUITAS MODAL"/>
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/list_ekuitas_modal"/>
+        android:text="EKUITAS MODAL"
+        android:id="@+id/ekuitas_modal"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp">
+        android:orientation="vertical"
+        android:id="@+id/layout_ekuitas_modal">
 
-        <TextView
-            android:layout_width="0dp"
+        <ListView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:layout_marginStart="5dp"
-            android:text="JUMLAH EKUITAS MODAL"/>
+            android:id="@+id/list_ekuitas_modal"/>
 
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/jumlah_ekuitas_modal"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:layout_marginStart="5dp"
+                android:text="JUMLAH EKUITAS MODAL"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/jumlah_ekuitas_modal"/>
+        </LinearLayout>
+
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"

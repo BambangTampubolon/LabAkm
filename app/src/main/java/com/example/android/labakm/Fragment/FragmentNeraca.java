@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -31,12 +32,15 @@ public class FragmentNeraca extends Fragment{
             textJumlahAset, textJumlahKewajiban, textJumlahEkuitasModal, textKewajibanEkuitas;
     private List<Jurnal> listJurnalAsetNonLancar, listJurnalAsetLancar, listJurnalKewajiban,
             listJurnalEkuitas;
+    private LinearLayout layoutAsetTidakLancar, layoutAsetLancar, layoutKewajiban, layoutEkuitasModal;
     private List<JurnalNeraca> neracaAsetNonLancar, neracaAsetLancar, neracaKewajiban, neracaEkuitas;
     private JurnalNeracaAdapter adapterAsetNonLancar, adapterAsetLancar, adapterKewajiban, adapterEkuitas;
     private Corporation corporationIntent;
     private Date startDate, endDate;
     private JurnalDao jurnalDao;
     private JurnalManager jurnalManager;
+    private TextView asetTidakLancar, asetLancar, kewajiban, ekuitasModal;
+    private boolean isHideAsetTidakLancar, isHideAsetLancar, isHideKewajiban, isHideEkuitasModal = true;
 
     @Nullable
     @Override
@@ -52,6 +56,15 @@ public class FragmentNeraca extends Fragment{
         textJumlahKewajiban = view.findViewById(R.id.jumlah_kewajiban);
         textJumlahEkuitasModal = view.findViewById(R.id.jumlah_ekuitas_modal);
         textKewajibanEkuitas = view.findViewById(R.id.jumlah_kewajiban_ekuitas_modal);
+        asetTidakLancar = view.findViewById(R.id.aset_tidak_lancar);
+        asetLancar = view.findViewById(R.id.aset_lancar);
+        kewajiban = view.findViewById(R.id.kewajiban);
+        ekuitasModal = view.findViewById(R.id.ekuitas_modal);
+        layoutAsetTidakLancar = view.findViewById(R.id.layout_aset_tidak_lancar);
+        layoutAsetLancar = view.findViewById(R.id.layout_aset_lancar);
+        layoutKewajiban = view.findViewById(R.id.layout_kewajiban);
+        layoutEkuitasModal = view.findViewById(R.id.layout_ekuitas_modal);
+
         jurnalDao = DatabaseSetting.getDatabase(getContext()).jurnalDao();
         jurnalManager = new JurnalManagerImpl(jurnalDao, getContext());
 
@@ -87,6 +100,59 @@ public class FragmentNeraca extends Fragment{
         listKewajiban.setAdapter(adapterKewajiban);
         listEkuitas.setAdapter(adapterEkuitas);
         populateLastText();
+
+        asetTidakLancar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isHideAsetTidakLancar){
+                    layoutAsetTidakLancar.setVisibility(View.GONE);
+                    isHideAsetTidakLancar = !isHideAsetTidakLancar;
+                }else {
+                    layoutAsetTidakLancar.setVisibility(View.VISIBLE);
+                    isHideAsetTidakLancar = !isHideAsetTidakLancar;
+                }
+
+            }
+        });
+
+        asetLancar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isHideAsetLancar){
+                    layoutAsetLancar.setVisibility(View.GONE);
+                    isHideAsetLancar = !isHideAsetLancar;
+                }else {
+                    layoutAsetLancar.setVisibility(View.GONE);
+                    isHideAsetLancar = !isHideAsetLancar;
+                }
+            }
+        });
+
+        kewajiban.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isHideKewajiban){
+                    layoutKewajiban.setVisibility(View.GONE);
+                    isHideKewajiban = !isHideKewajiban;
+                }else {
+                    layoutKewajiban.setVisibility(View.VISIBLE);
+                    isHideKewajiban = !isHideKewajiban;
+                }
+            }
+        });
+
+        ekuitasModal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isHideEkuitasModal){
+                    layoutEkuitasModal.setVisibility(View.GONE);
+                    isHideEkuitasModal = !isHideEkuitasModal;
+                }else {
+                    layoutEkuitasModal.setVisibility(View.VISIBLE);
+                    isHideEkuitasModal = !isHideEkuitasModal;
+                }
+            }
+        });
         return view;
     }
 

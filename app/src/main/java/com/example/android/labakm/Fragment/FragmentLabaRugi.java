@@ -2,13 +2,13 @@ package com.example.android.labakm.Fragment;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,7 +26,6 @@ import com.example.android.labakm.setting.DatabaseSetting;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 
 public class FragmentLabaRugi extends Fragment{
@@ -42,6 +41,8 @@ public class FragmentLabaRugi extends Fragment{
     private Date startDate,endDate;
     private LaporanTotal laporanTotal;
     private JurnalManager jurnalManager;
+    private LinearLayout layoutPendapatanJasa, layoutOperasional, layoutAdministrasi;
+    private boolean isHidePendapatanJasa, isHideOperasional, isHideAdministrasi = true;
 
 
     @Nullable
@@ -57,6 +58,10 @@ public class FragmentLabaRugi extends Fragment{
         listPendapatanJasa = view.findViewById(R.id.list_pendapatan_jasa);
         listBebanOperasional = view.findViewById(R.id.list_beban_operasional);
         listBebanAdministrasi = view.findViewById(R.id.list_beban_administrasi);
+        layoutPendapatanJasa = view.findViewById(R.id.pendapatan_jasa);
+        layoutOperasional = view.findViewById(R.id.beban_operasional);
+        layoutAdministrasi = view.findViewById(R.id.beban_adminstrasi);
+
         jurnalDao = DatabaseSetting.getDatabase(getContext()).jurnalDao();
         jurnalManager = new JurnalManagerImpl(jurnalDao, getContext());
         Bundle bundle = getArguments();
@@ -87,6 +92,45 @@ public class FragmentLabaRugi extends Fragment{
         listBebanOperasional.setAdapter(bebanOperasionalAdapter);
         listBebanAdministrasi.setAdapter(bebanAdministrasiAdapter);
         populateLastText();
+
+        layoutPendapatanJasa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isHidePendapatanJasa){
+                    listPendapatanJasa.setVisibility(View.GONE);
+                    isHidePendapatanJasa = !isHidePendapatanJasa;
+                }else {
+                    listPendapatanJasa.setVisibility(View.VISIBLE);
+                    isHidePendapatanJasa = !isHidePendapatanJasa;
+                }
+            }
+        });
+
+        layoutOperasional.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isHideOperasional){
+                    listBebanOperasional.setVisibility(View.GONE);
+                    isHideOperasional = !isHideOperasional;
+                }else {
+                    listBebanOperasional.setVisibility(View.VISIBLE);
+                    isHideOperasional = !isHideOperasional;
+                }
+            }
+        });
+
+        layoutAdministrasi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isHideAdministrasi){
+                    listBebanAdministrasi.setVisibility(View.GONE);
+                    isHideAdministrasi = !isHideAdministrasi;
+                }else {
+                    listBebanAdministrasi.setVisibility(View.VISIBLE);
+                    isHideAdministrasi = !isHideAdministrasi;
+                }
+            }
+        });
 
         return view;
     }

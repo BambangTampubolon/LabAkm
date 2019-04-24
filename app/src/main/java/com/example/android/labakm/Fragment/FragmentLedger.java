@@ -34,8 +34,9 @@ public class FragmentLedger extends Fragment{
     private Corporation corporationIntent;
     private List<JurnalLedger> ledgerAset, ledgerNonAset;
     private TextView textJumlahSaldoAwal, textJumlahModal, textJumlahDebit,
-            textJumlahKredit, textJumlahSaldoAkhir;
+            textJumlahKredit, textJumlahSaldoAkhir, textAkunAset, textAkunNonAset;
     private JurnalManager jurnalManager;
+    private boolean isHideAset, isHideNonAset = true;
 
     @Nullable
     @Override
@@ -48,6 +49,8 @@ public class FragmentLedger extends Fragment{
         textJumlahDebit = view.findViewById(R.id.text_jumlah_debit);
         textJumlahKredit = view.findViewById(R.id.text_jumlah_kredit);
         textJumlahSaldoAkhir = view.findViewById(R.id.text_jumlah_saldo_akhir);
+        textAkunAset = view.findViewById(R.id.text_akun_aset);
+        textAkunNonAset = view.findViewById(R.id.text_akun_nonaset);
         jurnalDao = DatabaseSetting.getDatabase(getContext()).jurnalDao();
         jurnalManager = new JurnalManagerImpl(jurnalDao, getContext());
 
@@ -72,6 +75,33 @@ public class FragmentLedger extends Fragment{
         listViewJurnalAset.setAdapter(jurnalAdapterAset);
         listViewJurnalNonAset.setAdapter(jurnalAdapterNonAset);
         populateLastText();
+
+        textAkunAset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isHideAset){
+                    listViewJurnalAset.setVisibility(View.GONE);
+                    isHideAset = !isHideAset;
+                }else {
+                    listViewJurnalAset.setVisibility(View.VISIBLE);
+                    isHideAset = !isHideAset;
+                }
+
+            }
+        });
+
+        textAkunNonAset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isHideNonAset){
+                    listViewJurnalNonAset.setVisibility(View.GONE);
+                    isHideNonAset = !isHideNonAset;
+                }else {
+                    listViewJurnalNonAset.setVisibility(View.VISIBLE);
+                    isHideNonAset = !isHideNonAset;
+                }
+            }
+        });
         return view;
     }
 

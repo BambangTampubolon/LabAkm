@@ -1,24 +1,24 @@
 package com.example.android.labakm;
 
-import android.annotation.SuppressLint;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.android.labakm.Fragment.FragmentValidasiSave;
 import com.example.android.labakm.Interface.AkunManager;
 import com.example.android.labakm.Interface.FragmentPauseInterface;
 import com.example.android.labakm.dao.AkunDao;
-import com.example.android.labakm.dao.CorporationDao;
 import com.example.android.labakm.entity.Akun;
+import com.example.android.labakm.entity.Barang;
 import com.example.android.labakm.entity.Corporation;
+import com.example.android.labakm.entity.viewmodel.BarangViewModel;
 import com.example.android.labakm.manager.AkunManagerImpl;
+import com.example.android.labakm.rest.BarangRest;
+import com.example.android.labakm.rest.impl.BarangRestImpl;
 import com.example.android.labakm.setting.DatabaseSetting;
 
 public class TambahAkun extends AppCompatActivity implements FragmentPauseInterface{
@@ -31,6 +31,7 @@ public class TambahAkun extends AppCompatActivity implements FragmentPauseInterf
     private FragmentManager fragmentManager;
     private FragmentValidasiSave fragmentValidasiSave;
     private AkunManager akunManager;
+    private BarangRest barangRest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class TambahAkun extends AppCompatActivity implements FragmentPauseInterf
         toastSucess = Toast.makeText(this, "Data berhasil Disimpan", Toast.LENGTH_LONG);
         akunDao = DatabaseSetting.getDatabase(this).akunDao();
         akunManager = new AkunManagerImpl(akunDao, this);
+        barangRest = new BarangRestImpl();
 
 
         Intent intentFromProfile = getIntent();
@@ -63,6 +65,14 @@ public class TambahAkun extends AppCompatActivity implements FragmentPauseInterf
 
     public void saveAkun(Akun akun) throws Exception {
         long idReturned = akunManager.insertAkun(akun);
+//        barangRest.getAllBarang();
+        Barang a = new Barang();
+        a.setCreatedby("test");
+        a.setHarga(1000);
+        a.setNama("testnama");
+        a.setTipe_barang_id(5);
+        a.setId(0);
+        barangRest.saveBarang(a);
         if(idReturned > 0){
            toastSucess.show();
            startActivity(toProfileIntent);
@@ -75,7 +85,7 @@ public class TambahAkun extends AppCompatActivity implements FragmentPauseInterf
         if(null == fragmentValidasiSave){
             fragmentValidasiSave = new FragmentValidasiSave();
             Bundle bundle = new Bundle();
-            bundle.putString("title_value", "APAKAH ANDA YAKIN AKAN MENYIMPAN DATA AKUN");
+                bundle.putString("title_value", "APAKAH ANDA YAKIN AKAN MENYIMPAN DATA AKUN");
             fragmentValidasiSave.setArguments(bundle);
         }
         if(!fragmentValidasiSave.isVisible()){
