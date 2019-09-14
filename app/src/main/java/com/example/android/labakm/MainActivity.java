@@ -1,11 +1,11 @@
 package com.example.android.labakm;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,28 +17,24 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.android.labakm.Fragment.FragmentExitApplication;
+import com.example.android.labakm.Interface.FragmentExitInterface;
 import com.example.android.labakm.dao.CorporationDao;
 import com.example.android.labakm.entity.Corporation;
 import com.example.android.labakm.entity.MySingleton;
 import com.example.android.labakm.setting.DatabaseSetting;
 import com.example.android.labakm.util.DatePickerFragment;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.example.android.labakm.util.StaticVariable;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.messaging.FirebaseMessaging;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
+public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, FragmentExitInterface{
 
     private Spinner spinnerCorp;
     private CorporationDao corporationDao;
@@ -68,8 +64,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     String NOTIFICATION_TITLE;
     String NOTIFICATION_MESSAGE;
     String TOPIC;
-
-
+    private FragmentManager fragmentManager;
+    private SharedPreferences sharedPreferences;
+    private FragmentExitApplication fragmentExitApplication;
+    private Intent toSignInIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,21 +89,22 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                     }
                 });
 
-        FirebaseMessaging.getInstance().subscribeToTopic("basar")
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        String msg = "SUCESSS";
-                        if(!task.isSuccessful()){
-                            msg = "FAILED";
-                        }
-                        Log.i("cek", "onComplete: " + msg);
-                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                    }
-                });
+//        FirebaseMessaging.getInstance().subscribeToTopic("basar")
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        String msg = "SUCESSS";
+//                        if(!task.isSuccessful()){
+//                            msg = "FAILED";
+//                        }
+//                        Log.i("cek", "onComplete: " + msg);
+//                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+//                    }
+//                });
 
         corporationDao = DatabaseSetting.getDatabase(this).corporationDao();
         toProfileIntent = new Intent(this, ProfileActivity.class);
+        toSignInIntent = new Intent(this, SignInActivity.class);
         try {
             listCorporationDb = new getAllAsyncTask(corporationDao).execute().get();
         } catch (InterruptedException e) {
@@ -117,6 +116,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         spinnerAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, corpDB);
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown);
         spinnerCorp.setAdapter(spinnerAdapter);
+        sharedPreferences = getSharedPreferences(StaticVariable.USER_PREFERENCES, Context.MODE_PRIVATE);
+
 
         tanggalAwal.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,36 +166,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                     toProfileIntent.putExtra("akhir", dateAkhir.getTime());
                     new changeIsActive(corporationDao, corporationSelected.getId()
                     , dateAwal.getTime(), dateAkhir.getTime(), toProfileIntent).execute();
-
                 }
 
 //                TOPIC = "/topics/basar";
                 TOPIC = "/cR6rkMefLO4:APA91bGWT16WZDD_aKTV6fPYxucdwsXQXjL0VXytq6rL8r2REJVVKIOZe71vcgvKElsVxh4cZOrQW-e8tJDyhIrvGf2sNJ8VqRhCcTXXTw2D8z6QoTwDUgY5Slm3DtJkLESHCGY4yN0g";
                 NOTIFICATION_TITLE = "amrunn sempakkkk";
                 NOTIFICATION_MESSAGE = "KOEEEEEEE";
-
-//                JSONObject sendJSON = new JSONObject();
-//                JSONObject notification = new JSONObject();
-//                JSONObject notifBody = new JSONObject();
-//                JSONObject data = new JSONObject();
-//
-//                try {
-//                    notifBody.put("title", "Breaking News");
-//                    notifBody.put("body", "raimu ra cetooo masss");
-//                    data.put("story_id","lalalla");
-//
-//                    sendJSON.put("notification", notifBody);
-//                    sendJSON.put("token", "cR6rkMefLO4:APA91bGWT16WZDD_aKTV6fPYxucdwsXQXjL0VXytq6rL8r2REJVVKIOZe71vcgvKElsVxh4cZOrQW-e8tJDyhIrvGf2sNJ8VqRhCcTXXTw2D8z6QoTwDUgY5Slm3DtJkLESHCGY4yN0g");
-//                    sendJSON.put("data", data);
-//
-//                    notification.put("message", sendJSON);
-//                    Log.i("cekjson", "onClick: " + notification.toString());
-//
-//                }catch (Exception e){
-//                    Log.i("CEKERROR", "onClick: ");
-//                }
-
-
 
                 JSONObject notification = new JSONObject();
                 JSONObject notifBody = new JSONObject();
@@ -238,7 +215,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 Map<String,String> params = new HashMap<>();
                 params.put("Authorization", serverKey);
                 params.put("Content-Type", contentType);
-//                params.put("Authorization", "Bearer " + "dAhYtHqIGa0:APA91bFbkIdENc3QUXvmEUE6DO1Ud7bqQF2q7VlBU5Ev4Zgd2FcKW-spIMOq4fJtEzi98ymlD2yCAiP-_IndGz5DVOL-N798Yse5LPNkbSFUAwXKDxVyO0se1eVA4v3UzYym0pLBjGoe");
                 return params;
             }
         };
@@ -282,6 +258,24 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
         dateAkhir = calendar.getTime();
         tanggalAkhir.setText(dateFormat.format(calendar.getTime()));
+    }
+
+    @Override
+    public void okExitButton() {
+        if(fragmentExitApplication.isVisible()){
+            fragmentExitApplication.dismiss();
+        }
+        sharedPreferences.edit().clear().apply();
+        toSignInIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        toSignInIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(toSignInIntent);
+    }
+
+    @Override
+    public void cancelExitButton() {
+        if(fragmentExitApplication.isVisible()){
+            fragmentExitApplication.dismiss();
+        }
     }
 
     private static class getAllAsyncTask extends AsyncTask<Void,Void,List<Corporation>>{
@@ -354,4 +348,18 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        fragmentManager = getFragmentManager();
+        fragmentExitApplication = (FragmentExitApplication) fragmentManager.findFragmentByTag("exit_app");
+        if(null == fragmentExitApplication){
+            fragmentExitApplication = new FragmentExitApplication();
+            Bundle bundle = new Bundle();
+            bundle.putString("title_value", "APAKAH ANDA YAKIN AKAN KELUAR");
+            fragmentExitApplication.setArguments(bundle);
+        }
+        if(!fragmentExitApplication.isVisible()){
+            fragmentExitApplication.show(fragmentManager, "initial_jurnal");
+        }
+    }
 }

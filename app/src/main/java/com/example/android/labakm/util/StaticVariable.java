@@ -14,11 +14,20 @@ public class StaticVariable {
     public static String FRAGMENT_EKUITAS = "EKUITAS";
     public static String FRAGMENT_TAMBAH_JURNAL = "TAMBAH_JURNAL";
     public static final String DATE_PATTERN = "yyyy-MM-dd";
-    public static final String GET_ALL_TIPE_BARANG = "http://192.168.43.14:8080/basar.api/v1/TipeBarangs";
-    public static final String GET_ALL_BARANG = "http://192.168.43.14:8080/basar.api/v1/Barangs";
-    public static final String UPDATE_BARANG = "http://192.168.43.14:8080/basar.api/v1/Barang";
-    public static final String SAVE_BARANG = "http://192.168.43.14:8080/basar.api/v1/Barang";
-    public static final String SAVE_INQUIRY = "http://192.168.43.14:8080/basar.api/v1/Inquiry";
+    public static final String IPSERVER = "192.168.1.2:8081";
+//    public static final String IPSERVER = "192.168.8.105:8081";
+    public static final String GET_ALL_TIPE_BARANG = "http://" + IPSERVER + "/basar.api/v1/TipeBarangs";
+    public static final String GET_ALL_BARANG = "http://" + IPSERVER + "/basar.api/v1/Barangs";
+    public static final String UPDATE_BARANG = "http://" + IPSERVER + "/basar.api/v1/Barang";
+    public static final String SAVE_BARANG = "http://" + IPSERVER + "/basar.api/v1/Barang";
+    public static final String SAVE_USER = "http://" + IPSERVER + "/basar.api/v1/UserToken";
+    public static final String SAVE_INQUIRY = "http://" + IPSERVER + "/basar.api/v1/Inquiry";
+    public static final String GET_INQUIRY_BY_IDTOKO = "http://" + IPSERVER + "/basar.api/v2/Inquiry/";
+    public static final String USER_PREFERENCES = "USER_TOKEN";
+//    public static final String IS_EXIST_USERNAME = "http://192.168.1.4:8081/basar.api/v2/UserToken";
+//    public static final String IS_VALID_LOGIN = "http://192.168.1.4:8081/basar.api/v1/UserToken";
+    public static final String IS_EXIST_USERNAME = "http://" + IPSERVER + "/basar.api/v2/UserToken";
+    public static final String IS_VALID_LOGIN = "http://" + IPSERVER  + "/basar.api/v1/UserToken";
 
     public static String date2String(Date date, String pattern) {
         if (null == date) {

@@ -1,6 +1,8 @@
 package com.example.android.labakm.entity.viewmodel;
 
-public class BarangViewModel {
+import java.io.Serializable;
+
+public class BarangViewModel implements Serializable{
     private int id;
     private int tipe_barang_id;
     private String nama;

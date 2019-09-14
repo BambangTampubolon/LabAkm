@@ -1,16 +1,16 @@
 package com.example.android.labakm.entity.viewmodel;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class OrderViewModel {
+public class OrderViewModel implements Serializable{
     private int id;
     private int id_toko;
     private String nama_toko;
     private int status;
-    private int order_id;
     private int total_harga;
-    public Date createddate;
+    public String createddate;
     public String createdby;
     public String createdbyname;
     public String createdterminal;
@@ -48,14 +48,6 @@ public class OrderViewModel {
         this.status = status;
     }
 
-    public int getOrder_id() {
-        return order_id;
-    }
-
-    public void setOrder_id(int order_id) {
-        this.order_id = order_id;
-    }
-
     public int getTotal_harga() {
         return total_harga;
     }
@@ -64,11 +56,11 @@ public class OrderViewModel {
         this.total_harga = total_harga;
     }
 
-    public Date getCreateddate() {
+    public String getCreateddate() {
         return createddate;
     }
 
-    public void setCreateddate(Date createddate) {
+    public void setCreateddate(String createddate) {
         this.createddate = createddate;
     }
 
@@ -111,7 +103,6 @@ public class OrderViewModel {
                 ", id_toko=" + id_toko +
                 ", nama_toko='" + nama_toko + '\'' +
                 ", status=" + status +
-                ", order_id=" + order_id +
                 ", total_harga=" + total_harga +
                 ", createddate=" + createddate +
                 ", createdby='" + createdby + '\'' +

@@ -53,9 +53,9 @@ public class ProdukAdapter extends BaseAdapter{
             @Override
             public void onClick(View view) {
                 entity.setJumlah(0);
-                if(!"".equals(textJumlah.getText().toString()) && textJumlah.getText().toString().length() > 0){
-                    entity.setJumlah(Integer.valueOf(textJumlah.getText().toString()));
-                }
+//                if(!"".equals(textJumlah.getText().toString()) && textJumlah.getText().toString().length() > 0){
+//                    entity.setJumlah(Integer.valueOf(textJumlah.getText().toString()));
+//                }
                 produkInquiryInterface.saveBarangtoProduk(entity);
             }
         });

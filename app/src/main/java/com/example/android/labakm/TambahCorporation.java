@@ -2,8 +2,10 @@ package com.example.android.labakm;
 
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,33 +17,52 @@ import com.example.android.labakm.Interface.FragmentPauseInterface;
 import com.example.android.labakm.dao.CorporationDao;
 import com.example.android.labakm.entity.Barang;
 import com.example.android.labakm.entity.Corporation;
+import com.example.android.labakm.entity.UserToken;
 import com.example.android.labakm.entity.viewmodel.BarangViewModel;
 import com.example.android.labakm.manager.CorporationManagerImpl;
+import com.example.android.labakm.rest.UserTokenRest;
+import com.example.android.labakm.rest.impl.UserTokenRestImpl;
 import com.example.android.labakm.setting.DatabaseSetting;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 public class TambahCorporation extends AppCompatActivity implements FragmentPauseInterface{
-
     private static CorporationDao corporationDao;
-    private EditText editNama, editAddress;
+    private TextInputEditText editUsername, editUserPassword, editUserAddress, editUserEmail;
     private Button buttonSave;
-    private static Toast toastSucess;
-    private static Intent toMainActivityIntent;
+    private static Toast toastSucess, toastFailed;
+    private static Intent toSignInActivity;
     private FragmentManager fragmentManager;
     private FragmentValidasiSave fragmentValidasiSave;
-    private CorporationManager corporationManager;
+    private UserTokenRest userTokenRest;
+    private String deviceToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tambah_corporation);
-        editNama = findViewById(R.id.edit_nama_korporasi);
-        editAddress = findViewById(R.id.edit_alamat_korporasi);
+        editUsername = findViewById(R.id.edit_username);
+        editUserPassword = findViewById(R.id.edit_password);
+        editUserAddress = findViewById(R.id.edit_address);
+        editUserEmail = findViewById(R.id.edit_email);
         buttonSave = findViewById(R.id.save_button);
+        userTokenRest = new UserTokenRestImpl();
         corporationDao = DatabaseSetting.getDatabase(this).corporationDao();
-        corporationManager = new CorporationManagerImpl(corporationDao, this);
 
-        toMainActivityIntent = new Intent(this, MainActivity.class);
         toastSucess = Toast.makeText(this, "Data berhasil Disimpan", Toast.LENGTH_LONG);
+        toastFailed = Toast.makeText(this, "Data gagal Disimpan", Toast.LENGTH_LONG);
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                    @Override
+                    public void onSuccess(InstanceIdResult instanceIdResult) {
+                        deviceToken = instanceIdResult.getToken();
+                        toastSucess.show();
+                    }
+                });
+
+        toSignInActivity = new Intent(this, SignInActivity.class);
+
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -52,20 +73,27 @@ public class TambahCorporation extends AppCompatActivity implements FragmentPaus
         });
     }
 
-    public void saveKorporasi(final Corporation corporation){
-        if(corporationManager.insertCorporation(corporation) > 0){
+    public void saveUserToken(UserToken userToken){
+        if(userTokenRest.saveNewUser(userToken)){
             toastSucess.show();
-            startActivity(toMainActivityIntent);
+            startActivity(toSignInActivity);
+        }else {
+            toastSucess.show();
         }
     }
 
     @Override
     public void okButton() {
-        Corporation corporation = new Corporation();
-        corporation.setIsactive(false);
-        corporation.setName(editNama.getText().toString());
-        corporation.setAddress(editAddress.getText().toString());
-        saveKorporasi(corporation);
+        UserToken userToken = new UserToken();
+        userToken.setCreatedbyname("application");
+        userToken.setCreatedterminal("application");
+        userToken.setCreatedby("application");
+        userToken.setUser_name(editUsername.getText().toString());
+        userToken.setPassword(Integer.valueOf(editUserPassword.getText().toString()));
+        userToken.setAlamat(editUserAddress.getText().toString());
+        userToken.setEmail(editUserEmail.getText().toString());
+        userToken.setFirebase_token(deviceToken);
+        saveUserToken(userToken);
     }
 
     @Override
@@ -76,13 +104,25 @@ public class TambahCorporation extends AppCompatActivity implements FragmentPaus
     private boolean validasiSave(){
         boolean isValid = true;
         Toast toastFailed;
-        if(null == editNama.getText()){
+        if(null == editUsername.getText()){
             isValid = false;
             toastFailed = Toast.makeText(this, "ISI NAMA KORPORASI TERLEBIH DAHULU", Toast.LENGTH_LONG);
             toastFailed.show();
             return isValid;
         }
-        if(null == editAddress.getText()){
+        if(null == editUserPassword.getText()){
+            isValid = false;
+            toastFailed = Toast.makeText(this, "ISI PASSWORD KORPORASI TERLEBIH DAHULU", Toast.LENGTH_LONG);
+            toastFailed.show();
+            return isValid;
+        }
+        if(null == editUserEmail.getText()){
+            isValid = false;
+            toastFailed = Toast.makeText(this, "ISI EMAIL KORPORASI TERLEBIH DAHULU", Toast.LENGTH_LONG);
+            toastFailed.show();
+            return isValid;
+        }
+        if(null == editUserAddress.getText()){
             isValid = false;
             toastFailed = Toast.makeText(this, "ISI ALAMAT KORPORASI TERLEBIH DAHULU", Toast.LENGTH_LONG);
             toastFailed.show();
